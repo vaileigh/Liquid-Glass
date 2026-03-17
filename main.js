@@ -9,7 +9,7 @@ if (glassBox) {
   };
 
   const backgroundImage = new Image();
-  backgroundImage.src = "moon_surface.jpg";
+  backgroundImage.src = "space.jpg";
 
   const backgroundMetrics = {
     width: window.innerWidth,

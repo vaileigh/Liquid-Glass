@@ -18,7 +18,7 @@
         font-family: "Segoe UI", sans-serif;
         background:
           linear-gradient(rgba(7, 11, 19, 0.2), rgba(7, 11, 19, 0.55)),
-          url("moon_surface.jpg") center center / cover no-repeat fixed;
+          url("space.jpg") center center / cover no-repeat fixed;
       }
 
       #app {
@@ -34,7 +34,7 @@
         --bg-offset-y: 0px;
         --bg-width: 100vw;
         --bg-height: 100vh;
-        --zoom: 1.28;
+        --zoom: 1.1;
         position: absolute;
         top: 15vh;
         left: 10vw;
@@ -42,8 +42,11 @@
         height: min(300px, 54vw);
         border-radius: 56px;
         border: 0;
-        background: rgba(255, 255, 255, 0.008);
-        box-shadow: 0 18px 38px rgba(0, 0, 0, 0.08);
+        background: rgba(8, 10, 16, 0.14);
+        box-shadow:
+          0 22px 48px rgba(0, 0, 0, 0.24),
+          inset 0 1px 0 rgba(255, 255, 255, 0.12),
+          inset 0 -18px 28px rgba(0, 0, 0, 0.1);
         cursor: grab;
         user-select: none;
         touch-action: none;
@@ -56,7 +59,10 @@
       .glass-box:active,
       .glass-box.dragging {
         cursor: grabbing;
-        box-shadow: 0 22px 46px rgba(0, 0, 0, 0.1);
+        box-shadow:
+          0 26px 54px rgba(0, 0, 0, 0.28),
+          inset 0 1px 0 rgba(255, 255, 255, 0.12),
+          inset 0 -18px 28px rgba(0, 0, 0, 0.14);
       }
 
       .glass-box::before {
@@ -66,14 +72,14 @@
         border-radius: 54px;
         background:
           radial-gradient(
-            120% 90% at 28% 20%,
-            rgba(255, 255, 255, 0.045) 0%,
-            rgba(255, 255, 255, 0.012) 30%,
-            rgba(255, 255, 255, 0) 58%
+            120% 90% at 55% 88%,
+            rgba(255, 255, 255, 0.12) 0%,
+            rgba(255, 255, 255, 0.032) 28%,
+            rgba(255, 255, 255, 0) 62%
           );
         pointer-events: none;
         z-index: 3;
-        opacity: 0.55;
+        opacity: 0.56;
       }
 
       .glass-box::after {
@@ -86,8 +92,8 @@
         background:
           radial-gradient(
             circle at 28% 34%,
-            rgba(255, 255, 255, 0.26) 0%,
-            rgba(255, 255, 255, 0.09) 24%,
+            rgba(255, 255, 255, 0.18) 0%,
+            rgba(255, 255, 255, 0.06) 24%,
             rgba(255, 255, 255, 0.01) 54%,
             rgba(255, 255, 255, 0) 74%
           );
@@ -95,7 +101,156 @@
         filter: blur(18px);
         pointer-events: none;
         z-index: 4;
-        opacity: 0.22;
+        opacity: 0.14;
+      }
+
+      .glass-box .edge-rim {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: 4;
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+          inset 0 0 20px rgba(255, 255, 255, 0.04),
+          inset 0 -10px 18px rgba(255, 255, 255, 0.03);
+        opacity: 0.96;
+      }
+
+      .glass-box .edge-thickness,
+      .glass-box .edge-thickness::before,
+      .glass-box .edge-thickness::after {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+      }
+
+      .glass-box .edge-thickness {
+        z-index: 5;
+        box-shadow:
+          inset 0 0 0 4px rgba(255, 255, 255, 0.12),
+          inset 0 0 0 8px rgba(255, 255, 255, 0.036),
+          inset 0 0 20px rgba(255, 255, 255, 0.04),
+          inset 0 -12px 18px rgba(0, 0, 0, 0.08);
+        opacity: 0.92;
+        filter: blur(0.4px);
+      }
+
+      .glass-box .edge-thickness::before,
+      .glass-box .edge-thickness::after {
+        content: "";
+        mix-blend-mode: screen;
+      }
+
+      .glass-box .edge-thickness::before {
+        inset: 2px 4px 2px 0;
+        box-shadow:
+          inset 4px 0 0 rgba(82, 160, 255, 0.18),
+          inset 0 4px 0 rgba(82, 160, 255, 0.1),
+          inset 12px 0 16px rgba(82, 160, 255, 0.06);
+        opacity: 0.62;
+        filter: blur(1.2px);
+      }
+
+      .glass-box .edge-thickness::after {
+        inset: 2px 0 2px 4px;
+        box-shadow:
+          inset -4px 0 0 rgba(255, 110, 190, 0.16),
+          inset 0 -4px 0 rgba(255, 110, 190, 0.08),
+          inset -12px 0 16px rgba(255, 110, 190, 0.05);
+        opacity: 0.56;
+        filter: blur(1.2px);
+      }
+
+      .glass-box .specular-arc,
+      .glass-box .specular-bloom,
+      .glass-box .chromatic-glow {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: 5;
+      }
+
+      .glass-box .specular-arc {
+        background:
+          radial-gradient(
+            58% 30% at 26% 28%,
+            rgba(255, 255, 255, 0.2) 0%,
+            rgba(255, 255, 255, 0.12) 18%,
+            rgba(255, 255, 255, 0.02) 36%,
+            rgba(255, 255, 255, 0) 54%
+          ),
+          radial-gradient(
+            46% 24% at 66% 74%,
+            rgba(255, 255, 255, 0.14) 0%,
+            rgba(255, 255, 255, 0.04) 24%,
+            rgba(255, 255, 255, 0) 52%
+          );
+        filter: blur(10px);
+        mix-blend-mode: screen;
+        opacity: 0.7;
+        animation: specularDrift 6.6s ease-in-out infinite;
+      }
+
+      .glass-box .specular-bloom {
+        background:
+          conic-gradient(
+            from 210deg at 34% 38%,
+            rgba(255, 255, 255, 0) 0deg,
+            rgba(255, 255, 255, 0.18) 38deg,
+            rgba(255, 255, 255, 0.02) 74deg,
+            rgba(255, 255, 255, 0) 126deg,
+            rgba(255, 255, 255, 0) 360deg
+          );
+        filter: blur(18px);
+        opacity: 0.34;
+        mix-blend-mode: screen;
+        animation: specularBloom 7.4s ease-in-out infinite;
+      }
+
+      .glass-box .chromatic-glow {
+        background:
+          radial-gradient(
+            34% 18% at 34% 46%,
+            rgba(72, 150, 255, 0.18) 0%,
+            rgba(72, 150, 255, 0.08) 26%,
+            rgba(72, 150, 255, 0) 52%
+          ),
+          radial-gradient(
+            30% 16% at 64% 44%,
+            rgba(255, 92, 184, 0.16) 0%,
+            rgba(255, 92, 184, 0.08) 24%,
+            rgba(255, 92, 184, 0) 54%
+          );
+        filter: blur(16px);
+        mix-blend-mode: screen;
+        opacity: 0.28;
+        animation: chromaticFloat 6.8s ease-in-out infinite;
+      }
+
+      .glass-box .specular-hit {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: 6;
+        background:
+          radial-gradient(
+            24% 10% at 24% 16%,
+            rgba(255, 255, 255, 0.88) 0%,
+            rgba(255, 255, 255, 0.28) 26%,
+            rgba(255, 255, 255, 0) 58%
+          ),
+          radial-gradient(
+            18% 8% at 76% 82%,
+            rgba(255, 255, 255, 0.46) 0%,
+            rgba(255, 255, 255, 0.12) 26%,
+            rgba(255, 255, 255, 0) 56%
+          );
+        filter: blur(2px);
+        opacity: 0.48;
       }
 
       .glass-lens {
@@ -106,15 +261,30 @@
         background:
           linear-gradient(
             180deg,
-            rgba(255, 255, 255, 0.03),
-            rgba(255, 255, 255, 0.008)
+            rgba(255, 255, 255, 0.02),
+            rgba(255, 255, 255, 0.012)
+          ),
+          radial-gradient(
+            120% 110% at 46% 102%,
+            rgba(255, 255, 255, 0.08) 0%,
+            rgba(255, 255, 255, 0.018) 34%,
+            rgba(255, 255, 255, 0) 66%
+          ),
+          radial-gradient(
+            90% 60% at 52% 8%,
+            rgba(255, 255, 255, 0.08) 0%,
+            rgba(255, 255, 255, 0.01) 28%,
+            rgba(255, 255, 255, 0) 56%
           );
         transform-origin: 50% 50%;
+        backdrop-filter: blur(0.7px) saturate(106%);
+        -webkit-backdrop-filter: blur(0.7px) saturate(106%);
       }
 
       .lens-texture,
       .lens-distortion,
       .lens-distortion-2,
+      .lens-caustic,
       .liquid-flow,
       .liquid-flow-2,
       .lens-shade {
@@ -126,8 +296,9 @@
 
       .lens-texture,
       .lens-distortion,
-      .lens-distortion-2 {
-        background-image: url("moon_surface.jpg");
+      .lens-distortion-2,
+      .lens-caustic {
+        background-image: url("space.jpg");
         background-repeat: no-repeat;
         background-size:
           calc(var(--bg-width) * var(--zoom))
@@ -138,52 +309,123 @@
       }
 
       .lens-texture {
-        opacity: 0.82;
-        filter: saturate(1.04) contrast(1.05) brightness(1.1);
-        transform: scale(1.06);
+        opacity: 0.96;
+        filter: saturate(1.03) contrast(1.16) brightness(0.8);
+        transform: scale(1.045);
         animation: textureDrift 7.6s ease-in-out infinite;
         border-radius: 50px;
       }
 
       .lens-distortion {
-        opacity: 0.22;
-        filter: blur(24px) saturate(1.06) brightness(1.08);
-        transform: scale(1.18) translate3d(2.8%, 2.2%, 0);
-        mix-blend-mode: lighten;
+        opacity: 0.18;
+        filter: blur(14px) saturate(1.08) brightness(0.96);
+        transform: scale(1.08) translate3d(1.4%, 1%, 0);
+        mix-blend-mode: screen;
         animation: waveTravelPrimary 4.8s ease-in-out infinite;
         border-radius: 54px;
       }
 
       .lens-distortion-2 {
-        opacity: 0.2;
+        opacity: 0.14;
         background-position:
-          calc((var(--bg-offset-x) - var(--lens-left)) * var(--zoom) + 18px)
-          calc((var(--bg-offset-y) - var(--lens-top)) * var(--zoom) - 14px);
+          calc((var(--bg-offset-x) - var(--lens-left)) * var(--zoom) + 26px)
+          calc((var(--bg-offset-y) - var(--lens-top)) * var(--zoom) - 18px);
         clip-path: path(
           "M 25 46 C 104 2, 246 11, 328 66 C 380 101, 398 160, 360 220 C 325 274, 236 289, 170 266 C 120 248, 102 216, 68 190 C 21 154, -1 92, 25 46 Z"
         );
-        filter: blur(28px) saturate(1.14) brightness(1.06);
-        transform: scale(1.18) translate3d(-3%, 3%, 0);
-        mix-blend-mode: soft-light;
+        filter: blur(16px) saturate(1.1) brightness(0.96);
+        transform: scale(1.08) translate3d(-1.8%, 1.4%, 0);
+        mix-blend-mode: screen;
         animation: waveTravelSecondary 6.1s ease-in-out infinite;
         border-radius: 52px;
       }
 
-      .lens-shade {
+      .lens-caustic {
+        opacity: 0.1;
+        background-position:
+          calc((var(--bg-offset-x) - var(--lens-left)) * var(--zoom) - 12px)
+          calc((var(--bg-offset-y) - var(--lens-top)) * var(--zoom) + 8px);
+        filter: blur(8px) saturate(1.16) contrast(1.12) brightness(1.08);
+        transform: scale(1.02);
+        mix-blend-mode: color-dodge;
+        animation: causticShift 5.4s ease-in-out infinite;
+      }
+
+      .edge-refraction {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: 3;
+        box-shadow:
+          inset 14px 0 24px rgba(255, 255, 255, 0.07),
+          inset -14px 0 24px rgba(255, 255, 255, 0.05),
+          inset 0 14px 22px rgba(255, 255, 255, 0.06),
+          inset 0 -16px 26px rgba(255, 255, 255, 0.05),
+          inset 24px 24px 28px rgba(82, 160, 255, 0.045),
+          inset -24px -20px 28px rgba(255, 110, 190, 0.04);
+        filter: blur(0.8px);
+      }
+
+      .edge-refraction::before,
+      .edge-refraction::after {
+        content: "";
+        position: absolute;
+        pointer-events: none;
+        border-radius: inherit;
+      }
+
+      .edge-refraction::before {
+        inset: 0;
         background:
-          linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.01) 0%,
-            rgba(255, 255, 255, 0.004) 34%,
-            rgba(255, 255, 255, 0.003) 100%
+          radial-gradient(
+            22% 24% at 10% 10%,
+            rgba(255, 255, 255, 0.08) 0%,
+            rgba(255, 255, 255, 0.02) 46%,
+            rgba(255, 255, 255, 0) 76%
           ),
           radial-gradient(
-            120% 100% at 50% 0%,
-            rgba(255, 255, 255, 0.018) 0%,
-            rgba(255, 255, 255, 0) 42%
+            20% 22% at 92% 90%,
+            rgba(255, 255, 255, 0.06) 0%,
+            rgba(255, 255, 255, 0.016) 42%,
+            rgba(255, 255, 255, 0) 76%
           );
-        backdrop-filter: blur(0.4px) saturate(116%);
-        -webkit-backdrop-filter: blur(0.4px) saturate(116%);
+        mix-blend-mode: screen;
+      }
+
+      .edge-refraction::after {
+        inset: 6px;
+        border-radius: 44px;
+        box-shadow:
+          inset 10px 0 18px rgba(82, 160, 255, 0.06),
+          inset -10px 0 18px rgba(255, 110, 190, 0.05),
+          inset 0 10px 16px rgba(255, 255, 255, 0.04),
+          inset 0 -10px 18px rgba(255, 255, 255, 0.03);
+        opacity: 0.9;
+      }
+
+      .lens-shade {
+        background:
+          radial-gradient(
+            110% 74% at 50% 16%,
+            rgba(255, 255, 255, 0.14) 0%,
+            rgba(255, 255, 255, 0.04) 20%,
+            rgba(255, 255, 255, 0) 56%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.018) 0%,
+            rgba(255, 255, 255, 0.006) 34%,
+            rgba(255, 255, 255, 0.014) 100%
+          ),
+          radial-gradient(
+            130% 120% at 50% 100%,
+            rgba(0, 0, 0, 0.16) 0%,
+            rgba(0, 0, 0, 0.06) 26%,
+            rgba(0, 0, 0, 0) 58%
+          );
+        backdrop-filter: blur(0.4px) saturate(110%);
+        -webkit-backdrop-filter: blur(0.4px) saturate(110%);
         z-index: 2;
       }
 
@@ -191,8 +433,8 @@
       .liquid-flow-2 {
         inset: -4%;
         border-radius: 50px;
-        filter: blur(8px);
-        opacity: 0.28;
+        filter: blur(7px);
+        opacity: 0.1;
         mix-blend-mode: soft-light;
         z-index: 2;
       }
@@ -201,14 +443,14 @@
         background:
           repeating-linear-gradient(
             180deg,
-            rgba(255, 255, 255, 0.1) 0 6px,
-            rgba(255, 255, 255, 0.02) 8px 20px,
-            rgba(255, 255, 255, 0.08) 24px 30px,
+            rgba(255, 255, 255, 0.04) 0 6px,
+            rgba(255, 255, 255, 0.01) 8px 20px,
+            rgba(255, 255, 255, 0.03) 24px 30px,
             rgba(255, 255, 255, 0) 34px 56px
           ),
           radial-gradient(
             70% 26% at 50% 44%,
-            rgba(255, 255, 255, 0.08) 0%,
+            rgba(255, 255, 255, 0.03) 0%,
             rgba(255, 255, 255, 0) 78%
           );
         animation: rippleSweep 4.4s linear infinite;
@@ -223,7 +465,7 @@
             rgba(255, 255, 255, 0) 20px 42px
           );
         filter: blur(12px);
-        opacity: 0.18;
+        opacity: 0.1;
         animation: rippleSweep 6.2s linear infinite reverse;
       }
 
@@ -241,12 +483,12 @@
         height: 20%;
         background: radial-gradient(
           circle at 44% 40%,
-          rgba(255, 255, 255, 0.08) 0%,
-          rgba(255, 255, 255, 0.02) 38%,
+          rgba(255, 255, 255, 0.14) 0%,
+          rgba(255, 255, 255, 0.05) 38%,
           rgba(255, 255, 255, 0) 72%
         );
-        filter: blur(18px);
-        opacity: 0.14;
+        filter: blur(20px);
+        opacity: 0.18;
         z-index: 2;
         animation: driftHighlight 5.2s ease-in-out infinite;
       }
@@ -281,16 +523,16 @@
         inset: 7% 4% 5% 4%;
         border-radius: 48px;
         background:
-          url("moon_surface.jpg") no-repeat;
+          url("space.jpg") no-repeat;
         background-size:
           calc(var(--bg-width) * calc(var(--zoom) + 0.12))
           calc(var(--bg-height) * calc(var(--zoom) + 0.12));
         background-position:
           calc((var(--bg-offset-x) - var(--lens-left)) * calc(var(--zoom) + 0.12) - 12px)
           calc((var(--bg-offset-y) - var(--lens-top)) * calc(var(--zoom) + 0.12) + 10px);
-        opacity: 0.42;
-        filter: blur(9px) contrast(1.14) saturate(1.14);
-        transform: rotate(-2deg) scale(1.03, 0.98);
+        opacity: 0.34;
+        filter: blur(8px) contrast(1.08) saturate(1.08) brightness(0.98);
+        transform: rotate(-1deg) scale(1.02, 0.98);
         mix-blend-mode: normal;
         pointer-events: none;
         z-index: 1;
@@ -308,7 +550,7 @@
         inset: 14% 40% 26% 8%;
         border-radius: 34px 46px 44px 36px;
         background:
-          url("moon_surface.jpg") no-repeat,
+          url("space.jpg") no-repeat,
           rgba(255, 255, 255, 0.02);
         background-size:
           calc(var(--bg-width) * calc(var(--zoom) + 0.18))
@@ -316,15 +558,15 @@
         background-position:
           calc((var(--bg-offset-x) - var(--lens-left)) * calc(var(--zoom) + 0.18) + 18px)
           calc((var(--bg-offset-y) - var(--lens-top)) * calc(var(--zoom) + 0.18) - 14px);
-        filter: blur(10px) contrast(1.16);
-        opacity: 0.52;
+        filter: blur(8px) contrast(1.1) brightness(1.01);
+        opacity: 0.34;
       }
 
       .underside-warp::after {
         inset: 44% 8% 8% 44%;
         border-radius: 38px 32px 42px 34px;
         background:
-          url("moon_surface.jpg") no-repeat,
+          url("space.jpg") no-repeat,
           rgba(255, 255, 255, 0.02);
         background-size:
           calc(var(--bg-width) * calc(var(--zoom) + 0.22))
@@ -332,8 +574,8 @@
         background-position:
           calc((var(--bg-offset-x) - var(--lens-left)) * calc(var(--zoom) + 0.22) - 24px)
           calc((var(--bg-offset-y) - var(--lens-top)) * calc(var(--zoom) + 0.22) + 20px);
-        filter: blur(12px) contrast(1.18);
-        opacity: 0.48;
+        filter: blur(9px) contrast(1.1) brightness(0.99);
+        opacity: 0.3;
       }
 
       @keyframes textureDrift {
@@ -431,6 +673,74 @@
           transform: translate3d(-14%, 0, 0) scale(1.22, 0.82);
         }
       }
+
+      @keyframes specularDrift {
+        0% {
+          transform: translate3d(-3%, -2%, 0) scale(0.98) rotate(-5deg);
+          opacity: 0.58;
+        }
+
+        50% {
+          transform: translate3d(3%, 2%, 0) scale(1.04) rotate(4deg);
+          opacity: 0.78;
+        }
+
+        100% {
+          transform: translate3d(-3%, -2%, 0) scale(0.98) rotate(-5deg);
+          opacity: 0.58;
+        }
+      }
+
+      @keyframes specularBloom {
+        0% {
+          transform: translate3d(0, 0, 0) scale(0.96);
+          opacity: 0.24;
+        }
+
+        50% {
+          transform: translate3d(2%, -2%, 0) scale(1.04);
+          opacity: 0.4;
+        }
+
+        100% {
+          transform: translate3d(0, 0, 0) scale(0.96);
+          opacity: 0.24;
+        }
+      }
+
+      @keyframes causticShift {
+        0% {
+          transform: scale(1.03) translate3d(-1.5%, 0, 0);
+          opacity: 0.12;
+        }
+
+        50% {
+          transform: scale(1.06) translate3d(1.8%, 0, 0);
+          opacity: 0.22;
+        }
+
+        100% {
+          transform: scale(1.03) translate3d(-1.5%, 0, 0);
+          opacity: 0.12;
+        }
+      }
+
+      @keyframes chromaticFloat {
+        0% {
+          transform: translate3d(-2%, 1%, 0) scale(0.98);
+          opacity: 0.2;
+        }
+
+        50% {
+          transform: translate3d(2%, -1%, 0) scale(1.04);
+          opacity: 0.34;
+        }
+
+        100% {
+          transform: translate3d(-2%, 1%, 0) scale(0.98);
+          opacity: 0.2;
+        }
+      }
     </style>
   </head>
   <body>
@@ -440,12 +750,20 @@
           <div class="lens-texture"></div>
           <div class="lens-distortion"></div>
           <div class="lens-distortion-2"></div>
+          <div class="lens-caustic"></div>
+          <div class="edge-refraction"></div>
           <div class="liquid-flow"></div>
           <div class="liquid-flow-2"></div>
           <div class="underside-warp"></div>
           <div class="lens-shade"></div>
           <div class="jelly-core"></div>
         </div>
+        <div class="edge-rim"></div>
+        <div class="edge-thickness"></div>
+        <div class="specular-arc"></div>
+        <div class="specular-bloom"></div>
+        <div class="chromatic-glow"></div>
+        <div class="specular-hit"></div>
       </div>
     </div>
     <script src="main.js"></script>
