@@ -35,11 +35,6 @@
         --bg-width: 100vw;
         --bg-height: 100vh;
         --zoom: 1.28;
-        --drag-scale-x: 1;
-        --drag-scale-y: 1;
-        --drag-rotate: 0deg;
-        --drag-skew-x: 0deg;
-        --drag-skew-y: 0deg;
         position: absolute;
         top: 15vh;
         left: 10vw;
@@ -55,10 +50,6 @@
         overflow: hidden;
         isolation: isolate;
         transform-origin: 50% 50%;
-        transform:
-          scale(var(--drag-scale-x), var(--drag-scale-y))
-          rotate(var(--drag-rotate))
-          skew(var(--drag-skew-x), var(--drag-skew-y));
         transition: box-shadow 180ms ease-out;
       }
 
