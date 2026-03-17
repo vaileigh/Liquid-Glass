@@ -34,65 +34,77 @@
         --bg-offset-y: 0px;
         --bg-width: 100vw;
         --bg-height: 100vh;
-        --zoom: 1.24;
+        --zoom: 1.28;
+        --drag-scale-x: 1;
+        --drag-scale-y: 1;
+        --drag-rotate: 0deg;
+        --drag-skew-x: 0deg;
+        --drag-skew-y: 0deg;
         position: absolute;
         top: 15vh;
         left: 10vw;
-        width: min(420px, 74vw);
-        height: min(280px, 42vw);
-        border-radius: 30px;
-        border: 1px solid rgba(255, 255, 255, 0.28);
-        background: rgba(255, 255, 255, 0.03);
-        box-shadow:
-          0 28px 70px rgba(0, 0, 0, 0.22),
-          inset 0 1px 0 rgba(255, 255, 255, 0.42),
-          inset 0 -18px 24px rgba(255, 255, 255, 0.06);
+        width: min(430px, 78vw);
+        height: min(300px, 54vw);
+        border-radius: 56px;
+        border: 0;
+        background: rgba(255, 255, 255, 0.008);
+        box-shadow: 0 18px 38px rgba(0, 0, 0, 0.08);
         cursor: grab;
         user-select: none;
         touch-action: none;
         overflow: hidden;
         isolation: isolate;
+        transform-origin: 50% 50%;
+        transform:
+          scale(var(--drag-scale-x), var(--drag-scale-y))
+          rotate(var(--drag-rotate))
+          skew(var(--drag-skew-x), var(--drag-skew-y));
+        transition: box-shadow 180ms ease-out;
       }
 
       .glass-box:active,
       .glass-box.dragging {
         cursor: grabbing;
+        box-shadow: 0 22px 46px rgba(0, 0, 0, 0.1);
       }
 
       .glass-box::before {
         content: "";
         position: absolute;
         inset: 1px;
-        border-radius: 29px;
-        background: linear-gradient(
-          155deg,
-          rgba(255, 255, 255, 0.34) 0%,
-          rgba(255, 255, 255, 0.14) 26%,
-          rgba(255, 255, 255, 0.06) 50%,
-          rgba(255, 255, 255, 0.02) 100%
-        );
-        mix-blend-mode: screen;
+        border-radius: 54px;
+        background:
+          radial-gradient(
+            120% 90% at 28% 20%,
+            rgba(255, 255, 255, 0.045) 0%,
+            rgba(255, 255, 255, 0.012) 30%,
+            rgba(255, 255, 255, 0) 58%
+          );
         pointer-events: none;
         z-index: 3;
+        opacity: 0.55;
       }
 
       .glass-box::after {
         content: "";
         position: absolute;
-        inset: -14% auto auto -8%;
-        width: 78%;
-        height: 52%;
+        inset: -18% auto auto -10%;
+        width: 58%;
+        height: 22%;
         border-radius: 999px;
-        background: radial-gradient(
-          circle,
-          rgba(255, 255, 255, 0.5) 0%,
-          rgba(255, 255, 255, 0.18) 34%,
-          rgba(255, 255, 255, 0) 72%
-        );
+        background:
+          radial-gradient(
+            circle at 28% 34%,
+            rgba(255, 255, 255, 0.26) 0%,
+            rgba(255, 255, 255, 0.09) 24%,
+            rgba(255, 255, 255, 0.01) 54%,
+            rgba(255, 255, 255, 0) 74%
+          );
         transform: rotate(-10deg);
-        filter: blur(4px);
+        filter: blur(18px);
         pointer-events: none;
         z-index: 4;
+        opacity: 0.22;
       }
 
       .glass-lens {
@@ -103,13 +115,17 @@
         background:
           linear-gradient(
             180deg,
-            rgba(255, 255, 255, 0.08),
-            rgba(255, 255, 255, 0.02)
+            rgba(255, 255, 255, 0.03),
+            rgba(255, 255, 255, 0.008)
           );
+        transform-origin: 50% 50%;
       }
 
       .lens-texture,
       .lens-distortion,
+      .lens-distortion-2,
+      .liquid-flow,
+      .liquid-flow-2,
       .lens-shade {
         position: absolute;
         inset: 0;
@@ -118,7 +134,8 @@
       }
 
       .lens-texture,
-      .lens-distortion {
+      .lens-distortion,
+      .lens-distortion-2 {
         background-image: url("moon_surface.jpg");
         background-repeat: no-repeat;
         background-size:
@@ -130,41 +147,298 @@
       }
 
       .lens-texture {
-        opacity: 0.58;
-        filter: saturate(1.12) contrast(1.08) brightness(1.08);
-        transform: scale(1.015);
+        opacity: 0.82;
+        filter: saturate(1.04) contrast(1.05) brightness(1.1);
+        transform: scale(1.06);
+        animation: textureDrift 7.6s ease-in-out infinite;
+        border-radius: 50px;
       }
 
       .lens-distortion {
         opacity: 0.22;
-        filter: blur(10px) saturate(1.18) brightness(1.14);
-        transform: scale(1.08) translate3d(1.5%, 1%, 0);
-        mix-blend-mode: screen;
+        filter: blur(24px) saturate(1.06) brightness(1.08);
+        transform: scale(1.18) translate3d(2.8%, 2.2%, 0);
+        mix-blend-mode: lighten;
+        animation: waveTravelPrimary 4.8s ease-in-out infinite;
+        border-radius: 54px;
+      }
+
+      .lens-distortion-2 {
+        opacity: 0.2;
+        background-position:
+          calc((var(--bg-offset-x) - var(--lens-left)) * var(--zoom) + 18px)
+          calc((var(--bg-offset-y) - var(--lens-top)) * var(--zoom) - 14px);
+        clip-path: path(
+          "M 25 46 C 104 2, 246 11, 328 66 C 380 101, 398 160, 360 220 C 325 274, 236 289, 170 266 C 120 248, 102 216, 68 190 C 21 154, -1 92, 25 46 Z"
+        );
+        filter: blur(28px) saturate(1.14) brightness(1.06);
+        transform: scale(1.18) translate3d(-3%, 3%, 0);
+        mix-blend-mode: soft-light;
+        animation: waveTravelSecondary 6.1s ease-in-out infinite;
+        border-radius: 52px;
       }
 
       .lens-shade {
         background:
-          radial-gradient(
-            circle at 20% 18%,
-            rgba(255, 255, 255, 0.34),
-            rgba(255, 255, 255, 0.12) 26%,
-            rgba(255, 255, 255, 0) 52%
-          ),
           linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.22) 0%,
-            rgba(255, 255, 255, 0.09) 24%,
-            rgba(255, 255, 255, 0.02) 54%,
-            rgba(255, 255, 255, 0.08) 100%
+            180deg,
+            rgba(255, 255, 255, 0.01) 0%,
+            rgba(255, 255, 255, 0.004) 34%,
+            rgba(255, 255, 255, 0.003) 100%
           ),
           radial-gradient(
-            circle at 80% 78%,
-            rgba(255, 255, 255, 0.12),
-            rgba(255, 255, 255, 0) 34%
+            120% 100% at 50% 0%,
+            rgba(255, 255, 255, 0.018) 0%,
+            rgba(255, 255, 255, 0) 42%
           );
-        backdrop-filter: blur(1.2px) saturate(130%);
-        -webkit-backdrop-filter: blur(1.2px) saturate(130%);
+        backdrop-filter: blur(0.4px) saturate(116%);
+        -webkit-backdrop-filter: blur(0.4px) saturate(116%);
         z-index: 2;
+      }
+
+      .liquid-flow,
+      .liquid-flow-2 {
+        inset: -4%;
+        border-radius: 50px;
+        filter: blur(8px);
+        opacity: 0.28;
+        mix-blend-mode: soft-light;
+        z-index: 2;
+      }
+
+      .liquid-flow {
+        background:
+          repeating-linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.1) 0 6px,
+            rgba(255, 255, 255, 0.02) 8px 20px,
+            rgba(255, 255, 255, 0.08) 24px 30px,
+            rgba(255, 255, 255, 0) 34px 56px
+          ),
+          radial-gradient(
+            70% 26% at 50% 44%,
+            rgba(255, 255, 255, 0.08) 0%,
+            rgba(255, 255, 255, 0) 78%
+          );
+        animation: rippleSweep 4.4s linear infinite;
+      }
+
+      .liquid-flow-2 {
+        background:
+          repeating-linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.08) 0 4px,
+            rgba(255, 255, 255, 0.015) 8px 16px,
+            rgba(255, 255, 255, 0) 20px 42px
+          );
+        filter: blur(12px);
+        opacity: 0.18;
+        animation: rippleSweep 6.2s linear infinite reverse;
+      }
+
+      .jelly-core,
+      .jelly-core::before,
+      .jelly-core::after {
+        position: absolute;
+        border-radius: 999px;
+        pointer-events: none;
+      }
+
+      .jelly-core {
+        inset: auto auto 14% 12%;
+        width: 58%;
+        height: 20%;
+        background: radial-gradient(
+          circle at 44% 40%,
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(255, 255, 255, 0.02) 38%,
+          rgba(255, 255, 255, 0) 72%
+        );
+        filter: blur(18px);
+        opacity: 0.14;
+        z-index: 2;
+        animation: driftHighlight 5.2s ease-in-out infinite;
+      }
+
+      .jelly-core::before,
+      .jelly-core::after {
+        content: "";
+      }
+
+      .jelly-core::before {
+        inset: -24% 16% 28% -12%;
+        background: radial-gradient(
+          circle at 50% 50%,
+          rgba(255, 255, 255, 0.16) 0%,
+          rgba(255, 255, 255, 0.04) 48%,
+          rgba(255, 255, 255, 0) 78%
+        );
+      }
+
+      .jelly-core::after {
+        inset: 24% -4% -18% 32%;
+        background: radial-gradient(
+          circle at 50% 50%,
+          rgba(255, 255, 255, 0.12) 0%,
+          rgba(255, 255, 255, 0.03) 44%,
+          rgba(255, 255, 255, 0) 74%
+        );
+      }
+
+      .underside-warp {
+        position: absolute;
+        inset: 7% 4% 5% 4%;
+        border-radius: 48px;
+        background:
+          url("moon_surface.jpg") no-repeat;
+        background-size:
+          calc(var(--bg-width) * calc(var(--zoom) + 0.12))
+          calc(var(--bg-height) * calc(var(--zoom) + 0.12));
+        background-position:
+          calc((var(--bg-offset-x) - var(--lens-left)) * calc(var(--zoom) + 0.12) - 12px)
+          calc((var(--bg-offset-y) - var(--lens-top)) * calc(var(--zoom) + 0.12) + 10px);
+        opacity: 0.42;
+        filter: blur(9px) contrast(1.14) saturate(1.14);
+        transform: rotate(-2deg) scale(1.03, 0.98);
+        mix-blend-mode: normal;
+        pointer-events: none;
+        z-index: 1;
+        animation: undersideWaveTravel 5.8s ease-in-out infinite;
+      }
+
+      .underside-warp::before,
+      .underside-warp::after {
+        content: "";
+        position: absolute;
+        pointer-events: none;
+      }
+
+      .underside-warp::before {
+        inset: 14% 40% 26% 8%;
+        border-radius: 34px 46px 44px 36px;
+        background:
+          url("moon_surface.jpg") no-repeat,
+          rgba(255, 255, 255, 0.02);
+        background-size:
+          calc(var(--bg-width) * calc(var(--zoom) + 0.18))
+          calc(var(--bg-height) * calc(var(--zoom) + 0.18));
+        background-position:
+          calc((var(--bg-offset-x) - var(--lens-left)) * calc(var(--zoom) + 0.18) + 18px)
+          calc((var(--bg-offset-y) - var(--lens-top)) * calc(var(--zoom) + 0.18) - 14px);
+        filter: blur(10px) contrast(1.16);
+        opacity: 0.52;
+      }
+
+      .underside-warp::after {
+        inset: 44% 8% 8% 44%;
+        border-radius: 38px 32px 42px 34px;
+        background:
+          url("moon_surface.jpg") no-repeat,
+          rgba(255, 255, 255, 0.02);
+        background-size:
+          calc(var(--bg-width) * calc(var(--zoom) + 0.22))
+          calc(var(--bg-height) * calc(var(--zoom) + 0.22));
+        background-position:
+          calc((var(--bg-offset-x) - var(--lens-left)) * calc(var(--zoom) + 0.22) - 24px)
+          calc((var(--bg-offset-y) - var(--lens-top)) * calc(var(--zoom) + 0.22) + 20px);
+        filter: blur(12px) contrast(1.18);
+        opacity: 0.48;
+      }
+
+      @keyframes textureDrift {
+        0% {
+          transform: scale(1.055) translate3d(-1.5%, 0, 0);
+        }
+
+        50% {
+          transform: scale(1.07) translate3d(1.5%, 0, 0);
+        }
+
+        100% {
+          transform: scale(1.055) translate3d(-1.5%, 0, 0);
+        }
+      }
+
+      @keyframes waveTravelPrimary {
+        0% {
+          transform: scale(1.16, 0.94) translate3d(-8%, 0, 0);
+          opacity: 0.18;
+        }
+
+        50% {
+          transform: scale(1.22, 0.88) translate3d(8%, 0, 0);
+          opacity: 0.26;
+        }
+
+        100% {
+          transform: scale(1.16, 0.94) translate3d(-8%, 0, 0);
+          opacity: 0.18;
+        }
+      }
+
+      @keyframes waveTravelSecondary {
+        0% {
+          transform: scale(1.14, 0.92) translate3d(8%, 0, 0);
+          opacity: 0.14;
+        }
+
+        50% {
+          transform: scale(1.2, 0.86) translate3d(-8%, 0, 0);
+          opacity: 0.22;
+        }
+
+        100% {
+          transform: scale(1.14, 0.92) translate3d(8%, 0, 0);
+          opacity: 0.14;
+        }
+      }
+
+      @keyframes driftHighlight {
+        0% {
+          transform: translate3d(-10%, 0, 0) scale(0.96, 1);
+          opacity: 0.08;
+        }
+
+        50% {
+          transform: translate3d(10%, 0, 0) scale(1.14, 0.82);
+          opacity: 0.16;
+        }
+
+        100% {
+          transform: translate3d(-10%, 0, 0) scale(0.96, 1);
+          opacity: 0.08;
+        }
+      }
+
+      @keyframes undersideWaveTravel {
+        0% {
+          transform: rotate(0deg) scale(1.04, 0.94) translate3d(-5%, 0, 0);
+          opacity: 0.38;
+        }
+
+        50% {
+          transform: rotate(0deg) scale(1.1, 0.88) translate3d(5%, 0, 0);
+          opacity: 0.5;
+        }
+
+        100% {
+          transform: rotate(0deg) scale(1.04, 0.94) translate3d(-5%, 0, 0);
+          opacity: 0.38;
+        }
+      }
+
+      @keyframes rippleSweep {
+        0% {
+          transform: translate3d(-14%, 0, 0) scale(1.22, 0.82);
+        }
+
+        50% {
+          transform: translate3d(12%, 0, 0) scale(1.3, 0.78);
+        }
+
+        100% {
+          transform: translate3d(-14%, 0, 0) scale(1.22, 0.82);
+        }
       }
     </style>
   </head>
@@ -174,7 +448,12 @@
         <div class="glass-lens">
           <div class="lens-texture"></div>
           <div class="lens-distortion"></div>
+          <div class="lens-distortion-2"></div>
+          <div class="liquid-flow"></div>
+          <div class="liquid-flow-2"></div>
+          <div class="underside-warp"></div>
           <div class="lens-shade"></div>
+          <div class="jelly-core"></div>
         </div>
       </div>
     </div>
