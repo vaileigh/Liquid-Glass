@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reflection Glass</title>
+    <style>
+      :root {
+        --scene-background:
+          linear-gradient(rgba(7, 11, 19, 0.22), rgba(7, 11, 19, 0.62)),
+          url("space.jpg") center center / cover no-repeat fixed;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        overflow: hidden;
+        position: relative;
+        background: var(--scene-background);
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      #app {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .glass-box {
+        position: absolute;
+        top: 15vh;
+        left: 10vw;
+        width: min(430px, 78vw);
+        height: min(300px, 54vw);
+        border-radius: 56px;
+        overflow: hidden;
+        isolation: isolate;
+        cursor: grab;
+        user-select: none;
+        touch-action: none;
+        background: rgba(8, 10, 16, 0.08);
+        box-shadow:
+          0 22px 52px rgba(0, 0, 0, 0.28),
+          inset 0 1px 0 rgba(255, 255, 255, 0.12),
+          inset 0 -18px 28px rgba(0, 0, 0, 0.12);
+      }
+
+      .glass-box.dragging {
+        cursor: grabbing;
+      }
+
+      .glass-core,
+      .edge-rim,
+      .edge-thickness,
+      .edge-refraction,
+      .specular-arc,
+      .specular-hit,
+      .chromatic-glow,
+      .wave-band,
+      .wave-band-2,
+      .bottom-glow {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+      }
+
+      .glass-core {
+        background:
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.03),
+            rgba(255, 255, 255, 0.008)
+          ),
+          radial-gradient(
+            110% 86% at 50% 12%,
+            rgba(255, 255, 255, 0.06) 0%,
+            rgba(255, 255, 255, 0.015) 24%,
+            rgba(255, 255, 255, 0) 58%
+          ),
+          radial-gradient(
+            120% 110% at 50% 100%,
+            rgba(255, 255, 255, 0.05) 0%,
+            rgba(255, 255, 255, 0.015) 30%,
+            rgba(255, 255, 255, 0) 66%
+          );
+        backdrop-filter: blur(10px) saturate(130%) contrast(1.18);
+        -webkit-backdrop-filter: blur(10px) saturate(130%) contrast(1.18);
+      }
+
+      .edge-rim {
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+          inset 0 0 18px rgba(255, 255, 255, 0.03),
+          inset 0 -10px 14px rgba(255, 255, 255, 0.015);
+        opacity: 0.86;
+        z-index: 2;
+      }
+
+      .edge-thickness {
+        box-shadow:
+          inset 0 0 0 4px rgba(255, 255, 255, 0.08),
+          inset 0 0 0 8px rgba(255, 255, 255, 0.026),
+          inset 0 0 20px rgba(255, 255, 255, 0.026),
+          inset 0 -12px 18px rgba(0, 0, 0, 0.08);
+        filter: blur(0.5px);
+        opacity: 0.84;
+        z-index: 3;
+      }
+
+      .edge-thickness::before,
+      .edge-thickness::after,
+      .edge-refraction::before,
+      .edge-refraction::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+      }
+
+      .edge-thickness::before {
+        inset: 2px 4px 2px 0;
+        box-shadow:
+          inset 4px 0 0 rgba(82, 160, 255, 0.14),
+          inset 0 4px 0 rgba(82, 160, 255, 0.08),
+          inset 12px 0 16px rgba(82, 160, 255, 0.05);
+        filter: blur(1.2px);
+        opacity: 0.55;
+        mix-blend-mode: screen;
+      }
+
+      .edge-thickness::after {
+        inset: 2px 0 2px 4px;
+        box-shadow:
+          inset -4px 0 0 rgba(255, 110, 190, 0.12),
+          inset 0 -4px 0 rgba(255, 110, 190, 0.07),
+          inset -12px 0 16px rgba(255, 110, 190, 0.04);
+        filter: blur(1.2px);
+        opacity: 0.5;
+        mix-blend-mode: screen;
+      }
+
+      .edge-refraction {
+        z-index: 3;
+        box-shadow:
+          inset 16px 0 24px rgba(255, 255, 255, 0.04),
+          inset -16px 0 24px rgba(255, 255, 255, 0.028),
+          inset 0 16px 22px rgba(255, 255, 255, 0.04),
+          inset 0 -18px 24px rgba(255, 255, 255, 0.03);
+        filter: blur(0.8px);
+      }
+
+      .edge-refraction::before {
+        background:
+          radial-gradient(
+            24% 28% at 10% 10%,
+            rgba(255, 255, 255, 0.12) 0%,
+            rgba(255, 255, 255, 0.026) 44%,
+            rgba(255, 255, 255, 0) 76%
+          ),
+          radial-gradient(
+            22% 24% at 92% 90%,
+            rgba(255, 255, 255, 0.1) 0%,
+            rgba(255, 255, 255, 0.02) 42%,
+            rgba(255, 255, 255, 0) 76%
+          );
+        mix-blend-mode: screen;
+      }
+
+      .edge-refraction::after {
+        inset: 6px;
+        border-radius: 44px;
+        box-shadow:
+          inset 12px 0 20px rgba(82, 160, 255, 0.065),
+          inset -12px 0 20px rgba(255, 110, 190, 0.05),
+          inset 0 10px 16px rgba(255, 255, 255, 0.03),
+          inset 0 -10px 18px rgba(255, 255, 255, 0.024);
+        opacity: 0.9;
+      }
+
+      .specular-arc {
+        z-index: 4;
+        background:
+          radial-gradient(
+            52% 26% at 28% 24%,
+            rgba(255, 255, 255, 0.18) 0%,
+            rgba(255, 255, 255, 0.08) 20%,
+            rgba(255, 255, 255, 0.015) 38%,
+            rgba(255, 255, 255, 0) 56%
+          ),
+          radial-gradient(
+            38% 20% at 70% 78%,
+            rgba(255, 255, 255, 0.12) 0%,
+            rgba(255, 255, 255, 0.04) 24%,
+            rgba(255, 255, 255, 0) 52%
+          );
+        filter: blur(12px);
+        mix-blend-mode: screen;
+        opacity: 0.72;
+        animation: specularDrift 6.8s ease-in-out infinite;
+      }
+
+      .specular-hit {
+        z-index: 5;
+        background:
+          radial-gradient(
+            18% 7% at 24% 16%,
+            rgba(255, 255, 255, 0.96) 0%,
+            rgba(255, 255, 255, 0.38) 18%,
+            rgba(255, 255, 255, 0) 58%
+          ),
+          radial-gradient(
+            16% 7% at 76% 82%,
+            rgba(255, 255, 255, 0.46) 0%,
+            rgba(255, 255, 255, 0.14) 24%,
+            rgba(255, 255, 255, 0) 56%
+          );
+        filter: blur(1px);
+        opacity: 0.48;
+      }
+
+      .chromatic-glow {
+        z-index: 4;
+        background:
+          radial-gradient(
+            34% 18% at 34% 46%,
+            rgba(72, 150, 255, 0.16) 0%,
+            rgba(72, 150, 255, 0.08) 24%,
+            rgba(72, 150, 255, 0) 52%
+          ),
+          radial-gradient(
+            30% 16% at 64% 44%,
+            rgba(255, 92, 184, 0.14) 0%,
+            rgba(255, 92, 184, 0.07) 22%,
+            rgba(255, 92, 184, 0) 52%
+          );
+        filter: blur(18px);
+        mix-blend-mode: screen;
+        opacity: 0.24;
+        animation: chromaticFloat 7s ease-in-out infinite;
+      }
+
+      .wave-band,
+      .wave-band-2 {
+        z-index: 2;
+        inset: -4%;
+        border-radius: 50px;
+        mix-blend-mode: soft-light;
+      }
+
+      .wave-band {
+        background:
+          repeating-linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.03) 0 6px,
+            rgba(255, 255, 255, 0.008) 8px 20px,
+            rgba(255, 255, 255, 0.025) 24px 30px,
+            rgba(255, 255, 255, 0) 34px 56px
+          );
+        filter: blur(7px);
+        opacity: 0.08;
+        animation: rippleSweep 5.2s linear infinite;
+      }
+
+      .wave-band-2 {
+        background:
+          repeating-linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.05) 0 4px,
+            rgba(255, 255, 255, 0.01) 8px 16px,
+            rgba(255, 255, 255, 0) 20px 42px
+          );
+        filter: blur(12px);
+        opacity: 0.08;
+        animation: rippleSweep 6.8s linear infinite reverse;
+      }
+
+      .bottom-glow {
+        z-index: 2;
+        background:
+          radial-gradient(
+            64% 34% at 52% 84%,
+            rgba(255, 255, 255, 0.1) 0%,
+            rgba(255, 255, 255, 0.028) 30%,
+            rgba(255, 255, 255, 0) 68%
+          );
+        filter: blur(18px);
+        opacity: 0.14;
+        animation: driftHighlight 6.2s ease-in-out infinite;
+      }
+
+      @keyframes rippleSweep {
+        0% {
+          transform: translate3d(-14%, 0, 0) scale(1.18, 0.84);
+        }
+
+        50% {
+          transform: translate3d(12%, 0, 0) scale(1.26, 0.8);
+        }
+
+        100% {
+          transform: translate3d(-14%, 0, 0) scale(1.18, 0.84);
+        }
+      }
+
+      @keyframes specularDrift {
+        0% {
+          transform: translate3d(-3%, -2%, 0) scale(0.98) rotate(-4deg);
+          opacity: 0.56;
+        }
+
+        50% {
+          transform: translate3d(3%, 2%, 0) scale(1.04) rotate(3deg);
+          opacity: 0.74;
+        }
+
+        100% {
+          transform: translate3d(-3%, -2%, 0) scale(0.98) rotate(-4deg);
+          opacity: 0.56;
+        }
+      }
+
+      @keyframes chromaticFloat {
+        0% {
+          transform: translate3d(-2%, 1%, 0) scale(0.98);
+          opacity: 0.18;
+        }
+
+        50% {
+          transform: translate3d(2%, -1%, 0) scale(1.04);
+          opacity: 0.3;
+        }
+
+        100% {
+          transform: translate3d(-2%, 1%, 0) scale(0.98);
+          opacity: 0.18;
+        }
+      }
+
+      @keyframes driftHighlight {
+        0% {
+          transform: translate3d(-8%, 0, 0) scale(0.96, 1);
+          opacity: 0.1;
+        }
+
+        50% {
+          transform: translate3d(8%, 0, 0) scale(1.08, 0.88);
+          opacity: 0.16;
+        }
+
+        100% {
+          transform: translate3d(-8%, 0, 0) scale(0.96, 1);
+          opacity: 0.1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="glass-box" class="glass-box">
+        <div class="glass-core"></div>
+        <div class="edge-refraction"></div>
+        <div class="wave-band"></div>
+        <div class="wave-band-2"></div>
+        <div class="bottom-glow"></div>
+        <div class="edge-rim"></div>
+        <div class="edge-thickness"></div>
+        <div class="specular-arc"></div>
+        <div class="chromatic-glow"></div>
+        <div class="specular-hit"></div>
+      </div>
+    </div>
+    <script src="reflection.js"></script>
+  </body>
+</html>
