@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liquid Glass Moon Surface</title>
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        overflow: hidden;
+        position: relative;
+        font-family: "Segoe UI", sans-serif;
+        background:
+          linear-gradient(rgba(7, 11, 19, 0.2), rgba(7, 11, 19, 0.55)),
+          url("moon_surface.jpg") center center / cover no-repeat fixed;
+      }
+
+      #app {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .glass-box {
+        --lens-left: 0px;
+        --lens-top: 0px;
+        --bg-offset-x: 0px;
+        --bg-offset-y: 0px;
+        --bg-width: 100vw;
+        --bg-height: 100vh;
+        --zoom: 1.24;
+        position: absolute;
+        top: 15vh;
+        left: 10vw;
+        width: min(420px, 74vw);
+        height: min(280px, 42vw);
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        background: rgba(255, 255, 255, 0.03);
+        box-shadow:
+          0 28px 70px rgba(0, 0, 0, 0.22),
+          inset 0 1px 0 rgba(255, 255, 255, 0.42),
+          inset 0 -18px 24px rgba(255, 255, 255, 0.06);
+        cursor: grab;
+        user-select: none;
+        touch-action: none;
+        overflow: hidden;
+        isolation: isolate;
+      }
+
+      .glass-box:active,
+      .glass-box.dragging {
+        cursor: grabbing;
+      }
+
+      .glass-box::before {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        border-radius: 29px;
+        background: linear-gradient(
+          155deg,
+          rgba(255, 255, 255, 0.34) 0%,
+          rgba(255, 255, 255, 0.14) 26%,
+          rgba(255, 255, 255, 0.06) 50%,
+          rgba(255, 255, 255, 0.02) 100%
+        );
+        mix-blend-mode: screen;
+        pointer-events: none;
+        z-index: 3;
+      }
+
+      .glass-box::after {
+        content: "";
+        position: absolute;
+        inset: -14% auto auto -8%;
+        width: 78%;
+        height: 52%;
+        border-radius: 999px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.5) 0%,
+          rgba(255, 255, 255, 0.18) 34%,
+          rgba(255, 255, 255, 0) 72%
+        );
+        transform: rotate(-10deg);
+        filter: blur(4px);
+        pointer-events: none;
+        z-index: 4;
+      }
+
+      .glass-lens {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        overflow: hidden;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.08),
+            rgba(255, 255, 255, 0.02)
+          );
+      }
+
+      .lens-texture,
+      .lens-distortion,
+      .lens-shade {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+      }
+
+      .lens-texture,
+      .lens-distortion {
+        background-image: url("moon_surface.jpg");
+        background-repeat: no-repeat;
+        background-size:
+          calc(var(--bg-width) * var(--zoom))
+          calc(var(--bg-height) * var(--zoom));
+        background-position:
+          calc((var(--bg-offset-x) - var(--lens-left)) * var(--zoom))
+          calc((var(--bg-offset-y) - var(--lens-top)) * var(--zoom));
+      }
+
+      .lens-texture {
+        opacity: 0.58;
+        filter: saturate(1.12) contrast(1.08) brightness(1.08);
+        transform: scale(1.015);
+      }
+
+      .lens-distortion {
+        opacity: 0.22;
+        filter: blur(10px) saturate(1.18) brightness(1.14);
+        transform: scale(1.08) translate3d(1.5%, 1%, 0);
+        mix-blend-mode: screen;
+      }
+
+      .lens-shade {
+        background:
+          radial-gradient(
+            circle at 20% 18%,
+            rgba(255, 255, 255, 0.34),
+            rgba(255, 255, 255, 0.12) 26%,
+            rgba(255, 255, 255, 0) 52%
+          ),
+          linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.22) 0%,
+            rgba(255, 255, 255, 0.09) 24%,
+            rgba(255, 255, 255, 0.02) 54%,
+            rgba(255, 255, 255, 0.08) 100%
+          ),
+          radial-gradient(
+            circle at 80% 78%,
+            rgba(255, 255, 255, 0.12),
+            rgba(255, 255, 255, 0) 34%
+          );
+        backdrop-filter: blur(1.2px) saturate(130%);
+        -webkit-backdrop-filter: blur(1.2px) saturate(130%);
+        z-index: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="glass-box" class="glass-box">
+        <div class="glass-lens">
+          <div class="lens-texture"></div>
+          <div class="lens-distortion"></div>
+          <div class="lens-shade"></div>
+        </div>
+      </div>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
